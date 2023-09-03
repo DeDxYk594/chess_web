@@ -12,15 +12,12 @@ body {
   /* disable touch panning/zooming */
   -ms-touch-action: none;
   touch-action: none;
-  justify-content: center;
+  justify-content: space-between;
   display: block;
+
+  margin-left: auto;
+  margin-right: auto;
 
   /* Allow canvas to hit the edges of the browser viewport. */
   margin: 0;
-}
-
-#screen canvas {
-  margin: auto;
-  /* Hide the gap for font descenders. */
-  display: block;
 }

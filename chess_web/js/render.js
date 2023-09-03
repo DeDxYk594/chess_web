@@ -4,6 +4,9 @@ import { viewportSize } from "./constants.js";
 const scaleFactor = viewportSize / 700;
 const luPoint = { x: 70 * scaleFactor, y: 70 * scaleFactor };
 const boardSize = 560 * scaleFactor;
+const step = boardSize / 8;
+const shrinkX = 0.7,
+  shrinkY = 1;
 
 let boardImage = new Image();
 boardImage.src = "assets/board.jpg";
@@ -26,25 +29,24 @@ export class Board extends me.Renderable {
   }
 
   draw(renderer) {
-    if (figureUp) {
-      let x = Math.round((upFigurePos.x - luPoint.x) / boardSize);
-      let y = Math.round((upFigurePos.y - luPoint.y) / boardSize);
-      console.log(x,y)
-      renderer.setColor("green");
-      let step = boardSize / 8;
-      renderer.fillRect(luPoint.x + x * step, luPoint.y + y * step, step, step);
-    }
     renderer.drawImage(boardImage, -1, -1, viewportSize, viewportSize);
     renderer.setColor("#ff0000");
 
     renderer.strokeRect(luPoint.x, luPoint.y, boardSize, boardSize);
+    if (figureUp) {
+      let x = Math.ceil((8 * (upFigurePos.x - luPoint.x)) / boardSize) - 1;
+      let y = Math.ceil((8 * (upFigurePos.y - luPoint.y)) / boardSize) - 1;
+      renderer.setColor("green");
+      renderer.fillRect(luPoint.x + x * step, luPoint.y + y * step, step, step);
+    }
   }
 }
 
 export class ChessPiece extends me.Draggable {
   constructor(x, y, settings) {
-    super(x, y, settings.width, settings.height);
-    this.dragged = true;
+    super(x, y, step, step);
+    
+    this.placeToPos(0,4)
   }
 
   update(dt) {
@@ -53,29 +55,40 @@ export class ChessPiece extends me.Draggable {
   }
 
   draw(renderer) {
-    let sz = Math.floor((20 * viewportSize) / 600); //TODO deprecated replace to scale factor
-
     renderer.drawImage(
       piecesImage,
-      0,
-      0,
-      200,
-      300,
-      this.pos.x,
-      this.pos.y,
-      2 * sz,
-      3 * sz
+      14,
+      50,
+      180,
+      270,
+      this.pos.x + (step-step * shrinkX) / 2,
+      this.pos.y + (step-step * shrinkY) / 2,
+      step * shrinkX,
+      step * shrinkY
     );
+
+    /*renderer.setColor("green");renderer.strokeRect(this.pos.x, this.pos.y, this.width, this.height);*/
   }
 
   dragStart(e) {
+    this.pos.x=e.clientX
+    this.pos.y=e.clientY
     super.dragStart(e);
     figureUp = true;
     upFigurePos = this.pos;
   }
+
+  placeToPos(x, y) {
+    this.pos.x = luPoint.x + x * step + 33 * scaleFactor;
+    this.pos.y = luPoint.y + y * step + 34 * scaleFactor;
+  }
+
   dragEnd(e) {
     super.dragEnd(e);
     figureUp = false;
+    let x = Math.ceil((8 * (upFigurePos.x - luPoint.x)) / boardSize) - 1;
+    let y = Math.ceil((8 * (upFigurePos.y - luPoint.y)) / boardSize) - 1;
+    this.placeToPos(x, y);
   }
 }
 

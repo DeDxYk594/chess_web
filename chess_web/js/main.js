@@ -1,6 +1,7 @@
 import * as me from "https://esm.run/melonjs@10.5";
-import { ChessPiece, DropTarget, DropTarget2, Board } from "./square.js";
+import { ChessPiece, DropTarget, DropTarget2, Board } from "./render.js";
 import { viewportSize } from "./constants.js";
+import 
 
 me.device.onReady(function () {
   // Initialize the video.
@@ -18,6 +19,6 @@ me.device.onReady(function () {
   me.game.world.addChild(new Board(0, 0), 0);
 
   // add a few squares
-  me.game.world.addChild(new ChessPiece(200, 230, { width: 100, height: 100 }), 1);
+  me.game.world.addChild(new ChessPiece(100, 100, { width: 100, height: 100 }), 1);
 
 });
